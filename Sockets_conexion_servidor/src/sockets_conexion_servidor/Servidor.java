@@ -1,4 +1,3 @@
-
 package sockets_conexion_servidor;
 
 import java.io.DataInputStream;
@@ -8,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Servidor {
+
     private ServerSocket serverSocket;
 
     public Servidor(int port) throws IOException {
@@ -40,6 +40,7 @@ public class Servidor {
     }
 
     private static class ClientHandler extends Thread {
+
         private Socket socket;
 
         public ClientHandler(Socket socket) {
@@ -52,14 +53,36 @@ public class Servidor {
                 DataInputStream input = new DataInputStream(socket.getInputStream());
                 DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 
-                // Leer el usuario y la contraseña enviados por el cliente
-                String username = input.readUTF();
-                String password = input.readUTF();
-                System.out.println("Usuario: " + username + ", Contraseña: " + password);
+                // Leer la acción solicitada por el cliente
+                String action = input.readUTF();
 
-                // Aquí se puede agregar la lógica para validar el usuario y la contraseña
-                // Por simplicidad, asumimos que la validación siempre es exitosa
-                output.writeUTF("Credenciales recibidas!");
+                if (action.equals("login")) {
+                    // Leer el usuario y la contraseña enviados por el cliente
+                    String username = input.readUTF();
+                    String password = input.readUTF();
+                    System.out.println("Usuario: " + username + ", Contraseña: " + password);
+
+                    // Validar las credenciales contra la base de datos
+                    if (DatabaseConnection.validateCredentials(username, password)) {
+                        output.writeUTF("Credenciales válidas!");
+                    } else {
+                        output.writeUTF("Credenciales inválidas!");
+                    }
+                } else if (action.equals("addUser")) {
+                    // Leer los datos del nuevo usuario
+                    String nombre = input.readUTF();
+                    String apellido = input.readUTF();
+                    String cedula = input.readUTF();
+                    String user = input.readUTF();
+                    String password = input.readUTF();
+
+                    // Agregar el nuevo usuario a la base de datos
+                    if (DatabaseConnection.addUser(nombre, apellido, cedula, user, password)) {
+                        output.writeUTF("Usuario agregado correctamente!");
+                    } else {
+                        output.writeUTF("Error al agregar el usuario!");
+                    }
+                }
 
                 // Cerrar las conexiones
                 input.close();
@@ -70,5 +93,5 @@ public class Servidor {
             }
         }
     }
-    
+
 }
