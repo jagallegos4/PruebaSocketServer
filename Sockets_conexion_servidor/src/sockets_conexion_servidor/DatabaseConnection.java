@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package sockets_conexion_servidor;
 
 import java.sql.Connection;
@@ -27,11 +23,11 @@ public class DatabaseConnection {
     public static boolean validateCredentials(String user, String password) {
         String query = "SELECT * FROM usuario WHERE user = ? AND password = ?";
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement ps = connection.prepareStatement(query)) {
             
-            preparedStatement.setString(1, user);
-            preparedStatement.setString(2, password);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            ps.setString(1, user);
+            ps.setString(2, password);
+            ResultSet resultSet = ps.executeQuery();
             
             return resultSet.next(); // Devuelve true si encuentra el usuario y la contraseña
         } catch (SQLException e) {
@@ -40,8 +36,8 @@ public class DatabaseConnection {
         return false;
     }
     
-    public static boolean addUser(String nombre, String apellido, String cedula, String user, String password) {
-        String query = "INSERT INTO usuarios (nombre, apellido, cedula, user, password) VALUES (?, ?, ?, ?, ?)";
+    /*public static boolean addUser(String nombre, String apellido, String cedula, String user, String password) {
+        String query = "INSERT INTO usuario (nombreUsuario, apellidoUsuario, cedula, user, password) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             
@@ -57,5 +53,29 @@ public class DatabaseConnection {
             e.printStackTrace();
         }
         return false;
+    }*/
+    
+    public static boolean addUser(Usuario usuario) {
+        String query = "INSERT INTO usuario (nombreUsuario, apellidoUsuario, cedula, user, password) VALUES (?, ?, ?, ?, ?)";
+        
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(query)) {
+            
+            ps.setString(1, usuario.getNombre());
+            ps.setString(2, usuario.getApellido());
+            ps.setString(3, usuario.getCedula());
+            ps.setString(4, usuario.getUser());
+            ps.setString(5, usuario.getPassword());
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; // Devuelve true si se insertó el usuario correctamente
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
+    /*
+    
+    
+    */
 }

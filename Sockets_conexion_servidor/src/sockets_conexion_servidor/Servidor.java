@@ -50,6 +50,8 @@ public class Servidor {
         @Override
         public void run() {
             try {
+                
+                
                 DataInputStream input = new DataInputStream(socket.getInputStream());
                 DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 
@@ -70,14 +72,17 @@ public class Servidor {
                     }
                 } else if (action.equals("addUser")) {
                     // Leer los datos del nuevo usuario
+                    
                     String nombre = input.readUTF();
                     String apellido = input.readUTF();
                     String cedula = input.readUTF();
                     String user = input.readUTF();
                     String password = input.readUTF();
+                    
+                    Usuario usuario =new Usuario(nombre, apellido, cedula, user, password);
 
                     // Agregar el nuevo usuario a la base de datos
-                    if (DatabaseConnection.addUser(nombre, apellido, cedula, user, password)) {
+                    if (DatabaseConnection.addUser(usuario)) {
                         output.writeUTF("Usuario agregado correctamente!");
                     } else {
                         output.writeUTF("Error al agregar el usuario!");
