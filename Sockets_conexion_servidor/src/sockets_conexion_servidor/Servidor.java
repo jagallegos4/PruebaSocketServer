@@ -82,6 +82,18 @@ public class Servidor {
                     } else {
                         output.writeUTF("Error al agregar el usuario!");
                     }
+                }else if(action.equals("addTipoCuenta")){
+                    //Leer los datos
+                    int idTipoCuenta = input.readInt();
+                    String nombreTipoCuenta = input.readUTF();
+                    TipoCuenta tipoCuenta = new TipoCuenta(idTipoCuenta, nombreTipoCuenta);
+                    
+                    //Agregar el tipo de cuenta a la base de datos
+                    if(DatabaseConnection.addTipoCuenta(tipoCuenta)){
+                        output.writeUTF("Tipo de cuenta agregado correctamente!");
+                    }else {
+                        output.writeUTF("Error al agregar el tipo de cuenta!");
+                    }
                 }
 
                 // Cerrar las conexiones
