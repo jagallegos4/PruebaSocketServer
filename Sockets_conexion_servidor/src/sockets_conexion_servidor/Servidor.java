@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 public class Servidor {
 
@@ -86,6 +87,20 @@ public class Servidor {
                         output.writeUTF("Usuario agregado correctamente!");
                     } else {
                         output.writeUTF("Error al agregar el usuario!");
+                    }
+                }
+                
+                else if (action.equals("getAllUsers")) {
+                    // Obtener todos los usuarios de la base de datos
+                    List<Usuario> usuarios = DatabaseConnection.getAllUsers();
+                    output.writeInt(usuarios.size());
+                    for (Usuario usuario : usuarios) {
+                        //output.writeInt(usuario.getIdUsuario());
+                        output.writeUTF(usuario.getNombre());
+                        output.writeUTF(usuario.getApellido());
+                        output.writeUTF(usuario.getCedula());
+                        output.writeUTF(usuario.getUser());
+                        output.writeUTF(usuario.getPassword());
                     }
                 }
 

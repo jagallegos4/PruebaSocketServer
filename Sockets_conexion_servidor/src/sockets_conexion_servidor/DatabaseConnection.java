@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -74,6 +76,28 @@ public class DatabaseConnection {
         }
         return false;
     }
+    public static List<Usuario> getAllUsers() {
+        String query = "SELECT * FROM usuario";
+        List<Usuario> usuarios = new ArrayList<>();
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Usuario usuario = new Usuario("","","","","");
+                //usuario.setIdUsuario(resultSet.getInt("idUsuario"));
+                usuario.setNombre(resultSet.getString("nombreUsuario"));
+                usuario.setApellido(resultSet.getString("apellidoUsuario"));
+                usuario.setCedula(resultSet.getString("cedula"));
+                usuario.setUser(resultSet.getString("user"));
+                usuario.setPassword(resultSet.getString("password"));
+                usuarios.add(usuario);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usuarios;
+    }
+    
     /*
     
     
