@@ -51,8 +51,7 @@ public class Servidor {
         @Override
         public void run() {
             try {
-                
-                
+
                 DataInputStream input = new DataInputStream(socket.getInputStream());
                 DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 
@@ -73,14 +72,14 @@ public class Servidor {
                     }
                 } else if (action.equals("addUser")) {
                     // Leer los datos del nuevo usuario
-                    
+                    int id = 0;
                     String nombre = input.readUTF();
                     String apellido = input.readUTF();
                     String cedula = input.readUTF();
                     String user = input.readUTF();
                     String password = input.readUTF();
-                    
-                    Usuario usuario =new Usuario(nombre, apellido, cedula, user, password);
+
+                    Usuario usuario = new Usuario(id, nombre, apellido, cedula, user, password);
 
                     // Agregar el nuevo usuario a la base de datos
                     if (DatabaseConnection.addUser(usuario)) {
@@ -88,26 +87,35 @@ public class Servidor {
                     } else {
                         output.writeUTF("Error al agregar el usuario!");
                     }
-                }else if(action.equals("addTipoCuenta")){
+                } else if (action.equals("addTipoCuenta")) {
                     //Leer los datos
                     int idTipoCuenta = input.readInt();
                     String nombreTipoCuenta = input.readUTF();
                     TipoCuenta tipoCuenta = new TipoCuenta(idTipoCuenta, nombreTipoCuenta);
-                    
+
                     //Agregar el tipo de cuenta a la base de datos
-                    if(DatabaseConnection.addTipoCuenta(tipoCuenta)){
+                    if (DatabaseConnection.addTipoCuenta(tipoCuenta)) {
                         output.writeUTF("Tipo de cuenta agregado correctamente!");
-                    }else {
+                    } else {
                         output.writeUTF("Error al agregar el tipo de cuenta!");
                     }
-                }
-                
-                else if (action.equals("getAllUsers")) {
+
+                } else if (action.equals("deleteUser")) {
+                    // Leer el ID del usuario a eliminar
+                    int idUsuario = input.readInt();
+
+                    // Eliminar el usuario de la base de datos
+                    if (DatabaseConnection.deleteUser(idUsuario)) {
+                        output.writeUTF("Usuario eliminado correctamente!");
+                    } else {
+                        output.writeUTF("Error al eliminar el usuario!");
+                    }
+                } else if (action.equals("getAllUsers")) {
                     // Obtener todos los usuarios de la base de datos
                     List<Usuario> usuarios = DatabaseConnection.getAllUsers();
                     output.writeInt(usuarios.size());
                     for (Usuario usuario : usuarios) {
-                        //output.writeInt(usuario.getIdUsuario());
+                        output.writeInt(usuario.getIdUsuario());
                         output.writeUTF(usuario.getNombre());
                         output.writeUTF(usuario.getApellido());
                         output.writeUTF(usuario.getCedula());

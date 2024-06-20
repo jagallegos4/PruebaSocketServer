@@ -34,28 +34,9 @@ public class DatabaseConnection {
         return false;
     }
     
-    /*public static boolean addUser(String nombre, String apellido, String cedula, String user, String password) {
-        String query = "INSERT INTO usuario (nombreUsuario, apellidoUsuario, cedula, user, password) VALUES (?, ?, ?, ?, ?)";
-        try (Connection connection = getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            
-            preparedStatement.setString(1, nombre);
-            preparedStatement.setString(2, apellido);
-            preparedStatement.setString(3, cedula);
-            preparedStatement.setString(4, user);
-            preparedStatement.setString(5, password);
-            
-            int rowsAffected = preparedStatement.executeUpdate();
-            System.out.println("Usuario"+nombre+" "+apellido+" ingresado exitosamente.");
-            return rowsAffected > 0; // Devuelve true si se insertó el usuario correctamente
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }*/
     
     public static boolean addUser(Usuario usuario) {
-        String query = "INSERT INTO usuario (nombreUsuario, apellidoUsuario, cedula, user, password) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO usuario (nombre, apellido, cedula, user, password) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection connection = getConnection();
              PreparedStatement ps = connection.prepareStatement(query)) {
@@ -75,16 +56,16 @@ public class DatabaseConnection {
     }
     
     public static boolean addTipoCuenta(TipoCuenta tipoCuenta){
-        String query = "INSERT INTO tipo_cuentas (ID_TIPO_CUENTA, NOMBRE_TIPO) VALUES (?,?)";
+        String query = "INSERT INTO tipo_cuentas (NOMBRE_TIPO) VALUES (?)";
         
-        int idTipoCuenta = tipoCuenta.getIdTipo();
+        //int idTipoCuenta = tipoCuenta.getIdTipo();
         String nombreTipoCuenta = tipoCuenta.getNombreTipo();
         
         try (Connection connection = getConnection();
             PreparedStatement ps = connection.prepareStatement(query)) {
             
-            ps.setInt(1, idTipoCuenta);
-            ps.setString(2, nombreTipoCuenta);
+            ps.setString(1, nombreTipoCuenta);
+            //ps.setString(2, nombreTipoCuenta);
             
             int rowsAffected = ps.executeUpdate();
             System.out.println("El tipo de cuenta"+" "+nombreTipoCuenta+" ingresado exitosamente.");
@@ -104,10 +85,10 @@ public class DatabaseConnection {
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Usuario usuario = new Usuario("","","","","");
-                //usuario.setIdUsuario(resultSet.getInt("idUsuario"));
-                usuario.setNombre(resultSet.getString("nombreUsuario"));
-                usuario.setApellido(resultSet.getString("apellidoUsuario"));
+                Usuario usuario = new Usuario(0,"","","","","");
+                usuario.setIdUsuario(resultSet.getInt("id_usuario"));
+                usuario.setNombre(resultSet.getString("nombre"));
+                usuario.setApellido(resultSet.getString("apellido"));
                 usuario.setCedula(resultSet.getString("cedula"));
                 usuario.setUser(resultSet.getString("user"));
                 usuario.setPassword(resultSet.getString("password"));
@@ -119,6 +100,19 @@ public class DatabaseConnection {
         return usuarios;
     }
     
+    public static boolean deleteUser(int idUsuario) {
+        String query = "DELETE FROM usuarios WHERE id_usuario = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(query)) {
+            
+            ps.setInt(1, idUsuario);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; // Devuelve true si se eliminó el usuario correctamente
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     /*
     
     
