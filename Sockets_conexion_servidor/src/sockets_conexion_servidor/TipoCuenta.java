@@ -1,15 +1,14 @@
 package sockets_conexion_servidor;
 
 public class TipoCuenta {
-    int idTipo;
-    String NombreTipo;
+    private int idTipo;
+    private String nombreTipo;
 
-    public TipoCuenta(int idTipo, String NombreTipo) {
+    public TipoCuenta(int idTipo, String nombreTipo) {
         this.idTipo = idTipo;
-        this.NombreTipo = NombreTipo;
+        this.nombreTipo = nombreTipo;
     }
-    
-    
+
     public int getIdTipo() {
         return idTipo;
     }
@@ -19,13 +18,13 @@ public class TipoCuenta {
     }
 
     public String getNombreTipo() {
-        return NombreTipo;
+        return nombreTipo;
     }
 
-    public void setNombreTipo(String NombreTipo) {
-        this.NombreTipo = NombreTipo;
+    public void setNombreTipo(String nombreTipo) {
+        this.nombreTipo = nombreTipo;
     }
-    
+
     
 
 }
