@@ -89,7 +89,8 @@ public class Servidor {
                     }
                 } else if (action.equals("addTipoCuenta")) {
                     //Leer los datos
-                    int idTipoCuenta = input.readInt();
+                    //int idTipoCuenta = input.readInt();
+                    int idTipoCuenta = 0;
                     String nombreTipoCuenta = input.readUTF();
                     TipoCuenta tipoCuenta = new TipoCuenta(idTipoCuenta, nombreTipoCuenta);
 
@@ -121,6 +122,22 @@ public class Servidor {
                         output.writeUTF(usuario.getCedula());
                         output.writeUTF(usuario.getUser());
                         output.writeUTF(usuario.getPassword());
+                    }
+                }
+                else if (action.equals("updateUser")) {
+                    // Leer los datos del usuario a actualizar
+                    int idUsuario = input.readInt();
+                    String nombre = input.readUTF();
+                    String apellido = input.readUTF();
+                    String cedula = input.readUTF();
+                    String user = input.readUTF();
+                    String password = input.readUTF();
+                     Usuario usuarios = new Usuario(idUsuario, nombre, apellido, cedula, user, password);
+                    // Actualizar el usuario en la base de datos
+                    if (DatabaseConnection.updateUser(usuarios)) {
+                        output.writeUTF("Usuario actualizado correctamente!");
+                    } else {
+                        output.writeUTF("Error al actualizar el usuario!");
                     }
                 }
 
