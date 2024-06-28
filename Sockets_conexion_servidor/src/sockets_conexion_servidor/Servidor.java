@@ -179,8 +179,37 @@ public class Servidor {
                         output.writeUTF(cuenta.getNombreCuenta());
                         output.writeInt(cuenta.getIdTipoCuenta());
                     }
-                } else if (action.equals("updateCuenta")){
+                } else if (action.equals("buscarIdTipo")){
+                    String nombreTipo = input.readUTF();
                     
+                    int idTipo =DatabaseConnection.obtenerIdTipo(nombreTipo);
+                    if(idTipo>0){
+                        output.writeInt(idTipo);
+                    }else{
+                        output.writeInt(-1);
+                    }
+                }else if (action.equals("updateCuenta")) {
+                    // Leer los datos del usuario a actualizar
+                    int idCuenta = input.readInt();
+                    String nombreCuenta = input.readUTF();
+                    int idTipoCuenta = input.readInt();
+                    Cuenta cuenta = new Cuenta(idCuenta, nombreCuenta, idTipoCuenta);
+                    // Actualizar el usuario en la base de datos
+                    if (DatabaseConnection.editarCuenta(cuenta)) {
+                        output.writeUTF("Cuenta actualizada correctamente!");
+                    } else {
+                        output.writeUTF("Error al actualizar la cuenta!");
+                    }
+                }else if (action.equals("deleteCuenta")) {
+                    // Leer los datos del usuario a actualizar
+                    int idCuenta = input.readInt();
+                    
+                    // Actualizar el usuario en la base de datos
+                    if (DatabaseConnection.eliminarCuenta(idCuenta)) {
+                        output.writeUTF("Cuenta eliminada correctamente!");
+                    } else {
+                        output.writeUTF("Error al eliminar la cuenta!");
+                    }
                 }
                 // Cerrar las conexiones
                 input.close();

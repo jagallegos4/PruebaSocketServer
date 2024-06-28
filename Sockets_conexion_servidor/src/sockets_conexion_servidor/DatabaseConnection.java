@@ -89,19 +89,19 @@ public class DatabaseConnection {
         }
         return false;
     }
-    
+
     public static boolean updateUser(Usuario usuarios) {
         String query = "UPDATE usuario SET nombre = ?, apellido = ?, cedula = ?, user = ?, password = ? WHERE id_usuario = ?";
         try (Connection connection = getConnection();
-             PreparedStatement ps = connection.prepareStatement(query)) {
-            
+                PreparedStatement ps = connection.prepareStatement(query)) {
+
             ps.setString(1, usuarios.getNombre());
             ps.setString(2, usuarios.getApellido());
             ps.setString(3, usuarios.getCedula());
             ps.setString(4, usuarios.getUser());
             ps.setString(5, usuarios.getPassword());
             ps.setInt(6, usuarios.getIdUsuario());
-            
+
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0; // Devuelve true si se actualizó el usuario correctamente
         } catch (SQLException e) {
@@ -109,7 +109,7 @@ public class DatabaseConnection {
         }
         return false;
     }
-    
+
     public static boolean addTipoCuenta(TipoCuenta tipoCuenta) {
         String query = "INSERT INTO tipo_cuentas (NOMBRE_TIPO) VALUES (?)";
 
@@ -118,7 +118,7 @@ public class DatabaseConnection {
 
             ps.setString(1, tipoCuenta.getNombreTipo());
             //ps.setString(2, nombreTipoCuenta);
-            
+
             int rowsAffected = ps.executeUpdate();
             System.out.println("El tipo de cuenta" + " " + tipoCuenta.getNombreTipo() + " ingresado exitosamente.");
             return rowsAffected > 0; // Devuelve true si se insertó el usuario correctamente
@@ -127,23 +127,23 @@ public class DatabaseConnection {
         }
         return false;
     }
-    
+
     public static boolean agregarCuenta(Cuenta cuenta) {
-        String query ="INSERT INTO cuentas (nombre_cuenta, id_tipo_cuenta) VALUES (?, ?)";
+        String query = "INSERT INTO cuentas (nombre_cuenta, id_tipo_cuenta) VALUES (?, ?)";
         try (Connection connection = getConnection();
-                PreparedStatement ps = connection.prepareStatement(query);){
-            
+                PreparedStatement ps = connection.prepareStatement(query);) {
+
             ps.setString(1, cuenta.getNombreCuenta());
             ps.setInt(2, cuenta.getIdTipoCuenta());
             int rowsAffected = ps.executeUpdate();
-            System.out.println("La cuenta" + " " + cuenta.getNombreCuenta() + " ingresado exitosamente.");
+            System.out.println("La cuenta" + " " + cuenta.getNombreCuenta() + " ingresada exitosamente.");
             return rowsAffected > 0; // Devuelve true si se insertó el usuario correctamente
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     public static List<TipoCuenta> obtenerTiposCuentas() {
         String query = "SELECT * FROM tipo_cuentas";
         List<TipoCuenta> tipoCuentas = new ArrayList<>();
@@ -151,7 +151,7 @@ public class DatabaseConnection {
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                TipoCuenta tipoCuenta = new TipoCuenta(0, "");                
+                TipoCuenta tipoCuenta = new TipoCuenta(0, "");
                 tipoCuenta.setIdTipo(resultSet.getInt("ID_TIPO_CUENTA"));
                 tipoCuenta.setNombreTipo(resultSet.getString("NOMBRE_TIPO"));
                 tipoCuentas.add(tipoCuenta);
@@ -165,17 +165,18 @@ public class DatabaseConnection {
     public static List<Cuenta> obtenerCuentas() {
         String query = "SELECT * FROM cuentas";
         List<Cuenta> cuentas = new ArrayList<>();
-        
-        try(Connection connection = getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(query)){
+
+        try (Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Cuenta cuenta = new Cuenta(0, "", 0);
                 cuenta.setIdCuenta(resultSet.getInt("id_cuenta"));
-                cuenta.setNombreCuenta(resultSet.getString("id_tipo_cuenta"));
+                cuenta.setNombreCuenta(resultSet.getString("nombre_cuenta"));
+                cuenta.setIdTipoCuenta(resultSet.getInt("id_tipo_cuenta"));
                 cuentas.add(cuenta);
-            }          
-        }catch (SQLException e) {
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return cuentas;
@@ -183,15 +184,14 @@ public class DatabaseConnection {
 
     public static boolean eliminarTipoCuenta(int idTipoCuenta) {
         String query = "DELETE FROM tipo_cuentas WHERE id_tipo_cuenta = ?";
-        
+
         try (Connection connection = getConnection();
                 PreparedStatement ps = connection.prepareStatement(query)) {
 
             ps.setInt(1, idTipoCuenta);
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0; // Devuelve true si se eliminó el usuario correctamente
-        }
-         catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
@@ -200,44 +200,66 @@ public class DatabaseConnection {
     public static boolean eliminarCuenta(int idCuenta) {
         String query = "DELETE FROM cuentas WHERE id_cuenta = ?";
         try (Connection connection = getConnection();
-                PreparedStatement ps = connection.prepareStatement(query)){
+                PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, idCuenta);
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0; // Devuelve true si se eliminó el usuario correctamente
-        }
-         catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     public static boolean editarTipoCuenta(TipoCuenta tipoCuenta) {
         String query = "UPDATE tipo_cuentas SET nombre_tipo = ? WHERE id_tipo_cuenta = ?";
         try (Connection connection = getConnection();
-             PreparedStatement ps = connection.prepareStatement(query)) {
-            
+                PreparedStatement ps = connection.prepareStatement(query)) {
+
             ps.setString(1, tipoCuenta.getNombreTipo());
             ps.setInt(2, tipoCuenta.getIdTipo());
-            
+
             int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0; // Devuelve true si se actualizó el usuario correctamente
+            return rowsAffected > 0; // Devuelve true si se actualizó el Tipo de cuenta correctamente
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public static boolean editarCuenta(Cuenta cuenta) {        
-        String query ="UPDATE cuentas SET nombre_cuenta = ?, id_tipo_cuenta = ? WHERE id_cuenta = ?";
-        
+    public static boolean editarCuenta(Cuenta cuenta) {
+        String query = "UPDATE cuentas SET id_tipo_cuenta = ?, nombre_cuenta = ?  WHERE id_cuenta = ?";
+
         try (Connection connection = getConnection();
-             PreparedStatement ps = connection.prepareStatement(query)){
-            ps.setString(1, cuenta.getNombreCuenta());
-            ps.setInt(2, cuenta.getIdTipoCuenta());
+                PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, cuenta.getIdTipoCuenta());
+            ps.setString(2, cuenta.getNombreCuenta());
             ps.setInt(3, cuenta.getIdCuenta());
-        }catch (SQLException e) {
-            e.printStackTrace();   
+            int rowsAffected = ps.executeUpdate();
+            System.out.println("La cuenta" + " " + cuenta.getNombreCuenta() + " actualizada exitosamente.");
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
+    }
+
+    public static int obtenerIdTipo(String nombreTipo) {
+        int idTipoCuenta =0;
+        String query = "select id_tipo_cuenta from tipo_cuentas where nombre_tipo = ?";
+        try (Connection connection = getConnection();
+                PreparedStatement ps = connection.prepareStatement(query)) {
+
+            ps.setString(1, nombreTipo);
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                idTipoCuenta = resultSet.getInt("id_tipo_cuenta");
+            } else {
+                idTipoCuenta = -1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return idTipoCuenta;
     }
 }
