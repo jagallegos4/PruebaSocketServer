@@ -262,4 +262,24 @@ public class DatabaseConnection {
 
         return idTipoCuenta;
     }
+    
+    public static int obtenerIdCuenta(String nombreCuenta) {
+        int idCuenta =0;
+        String query = "select id_cuenta from cuentas where nombre_cuenta = ?";
+        try (Connection connection = getConnection();
+                PreparedStatement ps = connection.prepareStatement(query)) {
+
+            ps.setString(1, nombreCuenta);
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                idCuenta = resultSet.getInt("id_cuenta");
+            } else {
+                idCuenta = -1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return idCuenta;
+    }
 }

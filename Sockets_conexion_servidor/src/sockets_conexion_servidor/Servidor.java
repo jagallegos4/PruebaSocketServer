@@ -210,7 +210,17 @@ public class Servidor {
                     } else {
                         output.writeUTF("Error al eliminar la cuenta!");
                     }
+                }else if (action.equals("buscarIdCuenta")){
+                    String nombreCuenta = input.readUTF();
+                    
+                    int idCuenta =DatabaseConnection.obtenerIdCuenta(nombreCuenta);
+                    if(idCuenta>0){
+                        output.writeInt(idCuenta);
+                    }else{
+                        output.writeInt(-1);
+                    }
                 }
+                
                 // Cerrar las conexiones
                 input.close();
                 output.close();
